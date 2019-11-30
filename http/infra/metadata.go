@@ -12,21 +12,23 @@ import (
 //Cannot get osVersion, osAvgLoad or osArch from GO
 //arch is an "educated" guess/lie
 type metadataPayload struct {
-	BuildNumber     string    `json:"buildNumber,omitempty"`
-	BuiltBy         string    `json:"builtBy,omitempty"`
-	BuiltWhen       string    `json:"builtWhen,omitempty"`
-	GitSha1         string    `json:"gitSha1,omitempty"`
-	GitBranch       string    `json:"Gitbranch,omitempty"`
-	CompilerVersion string    `json:"compilerVersion,omitempty"`
-	MachineName     string    `json:"machineName,omitempty"`
-	UpSince         time.Time `json:"upSince,omitempty"`
-	CurrentTime     time.Time `json:"currentTime,omitempty"`
-	GroupID         string    `json:"groupId,omitempty"`
-	OsArch          string    `json:"osArch,omitempty"`
-	OsName          string    `json:"osName,omitempty"`
-	OsNumProcessors int       `json:"osNumProcessors,omitempty"`
-	GoVersion       string    `json:"goVersion,omitempty"`
-	Version         int       `json:"version,omitempty"`
+	Application         string    `json:"application,omitempty"`
+	ApplicationFriendly string    `json:"applicationFriendly,omitempty"`
+	BuildNumber         string    `json:"buildNumber,omitempty"`
+	BuiltBy             string    `json:"builtBy,omitempty"`
+	BuiltWhen           string    `json:"builtWhen,omitempty"`
+	GitSha1             string    `json:"gitSha1,omitempty"`
+	GitBranch           string    `json:"Gitbranch,omitempty"`
+	CompilerVersion     string    `json:"compilerVersion,omitempty"`
+	MachineName         string    `json:"machineName,omitempty"`
+	UpSince             time.Time `json:"upSince,omitempty"`
+	CurrentTime         time.Time `json:"currentTime,omitempty"`
+	GroupID             string    `json:"groupId,omitempty"`
+	OsArch              string    `json:"osArch,omitempty"`
+	OsName              string    `json:"osName,omitempty"`
+	OsNumProcessors     int       `json:"osNumProcessors,omitempty"`
+	GoVersion           string    `json:"goVersion,omitempty"`
+	Version             int       `json:"version,omitempty"`
 }
 
 var (
@@ -70,21 +72,23 @@ func parseDate(s string) string {
 func metadata(w http.ResponseWriter, r *http.Request) {
 	hostname, _ := os.Hostname()
 	m := &metadataPayload{
-		BuildNumber:     getMetadata("build_number"),
-		BuiltBy:         getMetadata("build_user"),
-		BuiltWhen:       parseDate(getMetadata("build_date")),
-		GitSha1:         getMetadata("build_hash"),
-		GitBranch:       getMetadata("build_branch"),
-		CompilerVersion: getMetadata("build_compiler"),
-		GroupID:         getMetadata("build_group"),
-		MachineName:     hostname,
-		UpSince:         startTime,
-		CurrentTime:     time.Now().UTC(),
-		OsArch:          runtime.GOARCH,
-		OsName:          runtime.GOOS,
-		OsNumProcessors: runtime.NumCPU(),
-		GoVersion:       runtime.Version(),
-		Version:         1,
+		Application:         getMetadata("application"),
+		ApplicationFriendly: getMetadata("friendly"),
+		BuildNumber:         getMetadata("build_number"),
+		BuiltBy:             getMetadata("build_user"),
+		BuiltWhen:           parseDate(getMetadata("build_date")),
+		GitSha1:             getMetadata("build_hash"),
+		GitBranch:           getMetadata("build_branch"),
+		CompilerVersion:     getMetadata("build_compiler"),
+		GroupID:             getMetadata("build_group"),
+		MachineName:         hostname,
+		UpSince:             startTime,
+		CurrentTime:         time.Now().UTC(),
+		OsArch:              runtime.GOARCH,
+		OsName:              runtime.GOOS,
+		OsNumProcessors:     runtime.NumCPU(),
+		GoVersion:           runtime.Version(),
+		Version:             1,
 	}
 	jsonResponse(w, r, m)
 }
