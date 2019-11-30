@@ -16,6 +16,7 @@ type metadataPayload struct {
 	BuiltBy         string    `json:"builtBy,omitempty"`
 	BuiltWhen       time.Time `json:"builtWhen,omitempty"`
 	GitSha1         string    `json:"gitSha1,omitempty"`
+	GitBranch       string    `json:"Gitbranch,omitempty"`
 	CompilerVersion string    `json:"compilerVersion,omitempty"`
 	MachineName     string    `json:"machineName,omitempty"`
 	UpSince         time.Time `json:"upSince,omitempty"`
@@ -73,6 +74,7 @@ func metadata(w http.ResponseWriter, r *http.Request) {
 		BuiltBy:         getMetadata("build_user"),
 		BuiltWhen:       parseDate(getMetadata("build_date")),
 		GitSha1:         getMetadata("build_hash"),
+		GitBranch:       getMetadata("build_branch"),
 		CompilerVersion: getMetadata("build_compiler"),
 		GroupID:         getMetadata("build_group"),
 		MachineName:     hostname,
