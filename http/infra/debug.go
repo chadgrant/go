@@ -2,7 +2,6 @@ package infra
 
 import (
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -38,7 +37,6 @@ func debugEnvironment(w http.ResponseWriter, r *http.Request) {
 }
 
 func debugError(w http.ResponseWriter, r *http.Request) {
-	Error(w, r, http.StatusInternalServerError, errors.New("testing error system"))
 	panic("testing error system")
 }
 
