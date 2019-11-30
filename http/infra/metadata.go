@@ -14,7 +14,7 @@ import (
 type metadataPayload struct {
 	BuildNumber     string    `json:"buildNumber,omitempty"`
 	BuiltBy         string    `json:"builtBy,omitempty"`
-	BuiltWhen       time.Time `json:"builtWhen,omitempty"`
+	BuiltWhen       string    `json:"builtWhen,omitempty"`
 	GitSha1         string    `json:"gitSha1,omitempty"`
 	GitBranch       string    `json:"Gitbranch,omitempty"`
 	CompilerVersion string    `json:"compilerVersion,omitempty"`
@@ -59,12 +59,12 @@ func getMetadata(key string) string {
 	return "unknown"
 }
 
-func parseDate(s string) time.Time {
+func parseDate(s string) string {
 	t, err := time.Parse(time.UnixDate, s)
 	if err != nil {
-		return t
+		return err.Error()
 	}
-	return time.Now().UTC()
+	return t.Format(time.RFC3339)
 }
 
 func metadata(w http.ResponseWriter, r *http.Request) {
