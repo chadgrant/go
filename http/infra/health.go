@@ -15,10 +15,10 @@ const (
 var tests = make([]func() HealthCheckTestResult, 0)
 
 type HealthCheckReport struct {
-	ReportAsOf time.Time `json:"reportAsOf"`
-	Duration   int64     `json:"duration"`
-	Interval   int       `json:"interval"`
-	Tests      []HealthCheckTestResult
+	ReportAsOf time.Time               `json:"reportAsOf"`
+	Duration   int64                   `json:"duration"`
+	Interval   int                     `json:"interval"`
+	Tests      []HealthCheckTestResult `json:"tests"`
 }
 
 type HealthCheckTestResult struct {

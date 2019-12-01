@@ -13,7 +13,5 @@ func Handle() {
 	http.HandleFunc("/debug/headers", DebugHeaders)
 	http.HandleFunc("/debug/time", DebugTime)
 	http.HandleFunc("/debug/error", DebugError)
-	http.HandleFunc("/debug/env", DebugEnvironment)
-	http.HandleFunc("/debug/filedates", DebugFileDates)
 	http.HandleFunc("/debug/name", DebugName)
 }
