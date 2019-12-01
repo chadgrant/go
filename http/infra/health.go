@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	OK        = "OK"
-	UNHEALTHY = "UNHEALTHY"
+	Healthy   = "OK"
+	Unhealthy = "UNHEALTHY"
+	Degraded  = "DEGRADED"
 )
 
 var tests = make([]HealthCheck, 0)
@@ -61,7 +62,7 @@ func Readiness(w http.ResponseWriter, r *http.Request) {
 func Liveness(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	for _, t := range tests {
-		if t.Run().Result == UNHEALTHY {
+		if t.Run().Result != Healthy {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("FAILED"))
 		}
