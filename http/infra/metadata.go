@@ -9,6 +9,20 @@ import (
 	"time"
 )
 
+//will be filled in by ldflags at build time
+var (
+	Application         string
+	ApplicationFriendly string
+	BuildNumber         string
+	BuiltBy             string
+	BuiltWhen           string
+	GitSha1             string
+	GitBranch           string
+	CompilerVersion     string
+	GroupID             string
+	GoVersion           string
+)
+
 //Cannot get osVersion, osAvgLoad or osArch from GO
 //arch is an "educated" guess/lie
 type MetadataResponse struct {
