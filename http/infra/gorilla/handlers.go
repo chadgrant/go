@@ -14,7 +14,5 @@ func Handle(r *mux.Router) {
 	r.HandleFunc("/debug/headers", infra.DebugHeaders)
 	r.HandleFunc("/debug/time", infra.DebugTime)
 	r.HandleFunc("/debug/error", infra.DebugError)
-	r.HandleFunc("/debug/env", infra.DebugEnvironment)
-	r.HandleFunc("/debug/filedates", infra.DebugFileDates)
 	r.HandleFunc("/debug/name", infra.DebugName)
 }
