@@ -9,25 +9,25 @@ import (
 	"time"
 )
 
-func debugEnvironmentName(w http.ResponseWriter, r *http.Request) {
+func DebugEnvironmentName(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	w.Write([]byte(os.Getenv("ENVIRONMENT")))
 }
 
-func debugHeaders(w http.ResponseWriter, r *http.Request) {
+func DebugHeaders(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, r, r.Header)
 }
 
-func debugTime(w http.ResponseWriter, r *http.Request) {
+func DebugTime(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, r, time.Now())
 }
 
-func debugName(w http.ResponseWriter, r *http.Request) {
+func DebugName(w http.ResponseWriter, r *http.Request) {
 	hostname, _ := os.Hostname()
 	w.Write([]byte(hostname))
 }
 
-func debugEnvironment(w http.ResponseWriter, r *http.Request) {
+func DebugEnvironment(w http.ResponseWriter, r *http.Request) {
 	keys := os.Environ()
 	arr := make([]string, len(keys))
 	for i, v := range keys {
@@ -36,11 +36,11 @@ func debugEnvironment(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, r, arr)
 }
 
-func debugError(w http.ResponseWriter, r *http.Request) {
+func DebugError(w http.ResponseWriter, r *http.Request) {
 	panic("testing error system")
 }
 
-func debugFileDates(w http.ResponseWriter, r *http.Request) {
+func DebugFileDates(w http.ResponseWriter, r *http.Request) {
 	files, err := ioutil.ReadDir(".")
 	if err != nil {
 		Error(w, r, http.StatusInternalServerError, err)

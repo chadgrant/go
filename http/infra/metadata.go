@@ -11,7 +11,7 @@ import (
 
 //Cannot get osVersion, osAvgLoad or osArch from GO
 //arch is an "educated" guess/lie
-type metadataPayload struct {
+type MetadataResponse struct {
 	Application         string    `json:"application,omitempty"`
 	ApplicationFriendly string    `json:"applicationFriendly,omitempty"`
 	BuildNumber         string    `json:"buildNumber,omitempty"`
@@ -69,9 +69,9 @@ func parseDate(s string) string {
 	return t.Format(time.RFC3339)
 }
 
-func metadata(w http.ResponseWriter, r *http.Request) {
+func Metadata(w http.ResponseWriter, r *http.Request) {
 	hostname, _ := os.Hostname()
-	m := &metadataPayload{
+	m := &MetadataResponse{
 		Application:         getMetadata("application"),
 		ApplicationFriendly: getMetadata("friendly"),
 		BuildNumber:         getMetadata("build_number"),
