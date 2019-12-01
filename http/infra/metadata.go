@@ -18,7 +18,7 @@ type MetadataResponse struct {
 	BuiltBy             string    `json:"builtBy,omitempty"`
 	BuiltWhen           string    `json:"builtWhen,omitempty"`
 	GitSha1             string    `json:"gitSha1,omitempty"`
-	GitBranch           string    `json:"Gitbranch,omitempty"`
+	GitBranch           string    `json:"gitBranch,omitempty"`
 	CompilerVersion     string    `json:"compilerVersion,omitempty"`
 	MachineName         string    `json:"machineName,omitempty"`
 	UpSince             time.Time `json:"upSince,omitempty"`
