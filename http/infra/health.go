@@ -12,11 +12,7 @@ const (
 	Degraded  = "DEGRADED"
 )
 
-var tests = make([]HealthCheck, 0)
-
-type HealthCheck interface {
-	Run() HealthCheckTestResult
-}
+var tests = make([]func() HealthCheckTestResult, 0)
 
 type HealthCheckReport struct {
 	ReportAsOf time.Time `json:"reportAsOf"`
@@ -32,8 +28,8 @@ type HealthCheckTestResult struct {
 	TestedAt             time.Time `json:"testedAt"`
 }
 
-func RegisterHealthCheck(hc HealthCheck) {
-	tests = append(tests, hc)
+func RegisterHealthCheck(f func() HealthCheckTestResult) {
+	tests = append(tests, f)
 }
 
 func Health(w http.ResponseWriter, r *http.Request) {
