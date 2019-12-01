@@ -37,7 +37,7 @@ func Health(w http.ResponseWriter, r *http.Request) {
 	dur := int64(0)
 	results := make([]HealthCheckTestResult, 0)
 	for _, t := range tests {
-		res := t.Run()
+		res := t()
 		results = append(results, res)
 		dur += res.DurationMilliseconds
 	}
@@ -58,7 +58,7 @@ func Readiness(w http.ResponseWriter, r *http.Request) {
 func Liveness(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	for _, t := range tests {
-		if t.Run().Result != Healthy {
+		if t().Result != Healthy {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("FAILED"))
 		}
