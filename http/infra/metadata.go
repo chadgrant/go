@@ -1,11 +1,9 @@
 package infra
 
 import (
-	"io/ioutil"
 	"net/http"
 	"os"
 	"runtime"
-	"strings"
 	"time"
 )
 
@@ -21,6 +19,9 @@ var (
 	CompilerVersion     string
 	GroupID             string
 	GoVersion           string
+
+	startTime = time.Now().UTC()
+	md        = make(map[string]string, 0)
 )
 
 //Cannot get osVersion, osAvgLoad or osArch from GO
@@ -45,36 +46,6 @@ type MetadataResponse struct {
 	Version             int       `json:"version,omitempty"`
 }
 
-var (
-	startTime = time.Now().UTC()
-	md        = make(map[string]string, 0)
-)
-
-func init() {
-	readMetadata()
-}
-
-func readMetadata() {
-	bytes, err := ioutil.ReadFile("metadata.txt")
-	if err == nil {
-		lines := strings.Split(string(bytes), "\n")
-		for _, line := range lines {
-			sp := strings.SplitN(line, "=", 2)
-			if len(sp) != 2 {
-				continue
-			}
-			md[strings.ToLower(sp[0])] = sp[1]
-		}
-	}
-}
-
-func getMetadata(key string) string {
-	if val, ok := md[key]; ok {
-		return val
-	}
-	return "unknown"
-}
-
 func parseDate(s string) string {
 	t, err := time.Parse(time.UnixDate, s)
 	if err != nil {
@@ -86,15 +57,15 @@ func parseDate(s string) string {
 func Metadata(w http.ResponseWriter, r *http.Request) {
 	hostname, _ := os.Hostname()
 	m := &MetadataResponse{
-		Application:         getMetadata("application"),
-		ApplicationFriendly: getMetadata("friendly"),
-		BuildNumber:         getMetadata("build_number"),
-		BuiltBy:             getMetadata("build_user"),
-		BuiltWhen:           parseDate(getMetadata("build_date")),
-		GitSha1:             getMetadata("build_hash"),
-		GitBranch:           getMetadata("build_branch"),
-		CompilerVersion:     getMetadata("build_compiler"),
-		GroupID:             getMetadata("build_group"),
+		Application:         Application,
+		ApplicationFriendly: ApplicationFriendly,
+		BuildNumber:         BuildNumber,
+		BuiltBy:             BuiltBy,
+		BuiltWhen:           BuiltWhen,
+		GitSha1:             GitSha1,
+		GitBranch:           GitBranch,
+		CompilerVersion:     CompilerVersion,
+		GroupID:             GroupID,
 		MachineName:         hostname,
 		UpSince:             startTime,
 		CurrentTime:         time.Now().UTC(),
