@@ -5,7 +5,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func HandleGorilla(r *mux.Router) {
+func Handle(r *mux.Router) {
 	r.HandleFunc("/health/liveness", infra.Liveness)
 	r.HandleFunc("/health/readiness", infra.Readiness)
 	r.HandleFunc("/health", infra.Health)
