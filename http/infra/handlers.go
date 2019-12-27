@@ -15,3 +15,15 @@ func Handle() {
 	http.HandleFunc("/debug/error", DebugError)
 	http.HandleFunc("/debug/name", DebugName)
 }
+
+func HandleMux(mux *http.ServeMux) {
+	mux.HandleFunc("/health/liveness", Liveness)
+	mux.HandleFunc("/health/readiness", Readiness)
+	mux.HandleFunc("/health", Health)
+	mux.HandleFunc("/metadata", Metadata)
+	mux.HandleFunc("/debug/environment", DebugEnvironmentName)
+	mux.HandleFunc("/debug/headers", DebugHeaders)
+	mux.HandleFunc("/debug/time", DebugTime)
+	mux.HandleFunc("/debug/error", DebugError)
+	mux.HandleFunc("/debug/name", DebugName)
+}
