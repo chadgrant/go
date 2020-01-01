@@ -1,2 +1,3 @@
+github.com/chadgrant/go-http-infra v1.0.0 h1:bIYAS3aCltAAM8Z9uvV/Ql5fqyxp4QoFtaoRfZgEj98=
 github.com/gorilla/mux v1.7.3 h1:gnP5JzjVOuiZD07fKKToCAOjS0yOpj/qPETTXCCS6hw=
 github.com/gorilla/mux v1.7.3/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
