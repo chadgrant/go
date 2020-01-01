@@ -1,7 +1,7 @@
 package gorilla
 
 import (
-	"github.com/chadgrant/infra"
+	"github.com/chadgrant/go-http-infra/infra"
 	"github.com/gorilla/mux"
 )
 
