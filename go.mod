@@ -1,4 +1,4 @@
-module github.com/chadgrant/go-http-infra
+module github.com/chadgrant/infra
 
 go 1.13
 
