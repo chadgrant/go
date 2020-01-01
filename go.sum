@@ -1,4 +1,2 @@
-github.com/chadgrant/go v0.0.0-20200101210700-9b143346e953 h1:Ecxc8B9YOO03ykxc8GrUEa6Y7uxVWQ2K3o3XhVBgxWI=
-github.com/chadgrant/go v0.0.0-20200101210700-9b143346e953/go.mod h1:HmQ8r8G3uGX3kOsfjWDPakL3K/Wi9GH8lgCjykYODMM=
 github.com/gorilla/mux v1.7.3 h1:gnP5JzjVOuiZD07fKKToCAOjS0yOpj/qPETTXCCS6hw=
 github.com/gorilla/mux v1.7.3/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
