@@ -16,4 +16,10 @@ while true; do
     t=$(date +%s)
     hey http://localhost:${PORT}/ready?t=${t}
     test $? -gt 128 && break
+
+    hey http://localhost:${PORT}/live?t=${t}
+    test $? -gt 128 && break
+
+    hey http://localhost:${PORT}/report?t=${t}
+    test $? -gt 128 && break
 done

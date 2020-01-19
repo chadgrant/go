@@ -110,15 +110,16 @@ type (
 	}
 
 	// Result is the result of the health check test
-	// Duration: How long the check took in milliseconds
-	// Interval: For background checks, how often the check should be run
 	// Name: The name of the test
-	// Status: status of the health check. Anything but "OK" considered an error
+	// Interval: For background checks, how often the check should be run
+	//			 For lazy checks, how long the check is considered fresh
+	// Duration: How long the check took in milliseconds
+	// Status: status of the health check. Anything but "OK" considered unhealthy
 	// TestedAt: When the test was run
 	Result struct {
-		Duration uint32     `json:"duration_ms"`
-		Interval uint32     `json:"interval_ms,omitempty"`
 		Name     string     `json:"name"`
+		Interval uint32     `json:"interval_ms,omitempty"`
+		Duration uint32     `json:"duration_ms"`
 		Status   string     `json:"status"`
 		TestedAt *time.Time `json:"tested_at_utc"`
 	}
