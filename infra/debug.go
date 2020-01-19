@@ -2,6 +2,7 @@ package infra
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -9,7 +10,10 @@ import (
 
 func DebugEnvironmentName(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
-	w.Write([]byte(os.Getenv("ENVIRONMENT")))
+	_, err := w.Write([]byte(os.Getenv("ENVIRONMENT")))
+	if err != nil {
+		log.Println("[httperr] unable to write error to response writer")
+	}
 }
 
 func DebugHeaders(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +26,10 @@ func DebugTime(w http.ResponseWriter, r *http.Request) {
 
 func DebugName(w http.ResponseWriter, r *http.Request) {
 	hostname, _ := os.Hostname()
-	w.Write([]byte(hostname))
+	_, err := w.Write([]byte(hostname))
+	if err != nil {
+		log.Println("[httperr] unable to write error to response writer")
+	}
 }
 
 func DebugError(w http.ResponseWriter, r *http.Request) {
@@ -38,5 +45,8 @@ func jsonResponse(w http.ResponseWriter, r *http.Request, o interface{}) {
 		return
 	}
 
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		log.Println("[debug-handler] unable to write error to response writer")
+	}
 }

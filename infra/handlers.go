@@ -1,13 +1,14 @@
 package infra
 
 import (
+	"github.com/chadgrant/go-http-infra/infra/health"
 	"net/http"
 )
 
-func Handle() {
-	http.HandleFunc("/health/liveness", Liveness)
-	http.HandleFunc("/health/readiness", Readiness)
-	http.HandleFunc("/health", Health)
+func Handle(hc health.Handler) {
+	http.HandleFunc("/health/liveness", hc.Live)
+	http.HandleFunc("/health/readiness", hc.Ready)
+	http.HandleFunc("/health", hc.Report)
 	http.HandleFunc("/metadata", Metadata)
 	http.HandleFunc("/debug/environment", DebugEnvironmentName)
 	http.HandleFunc("/debug/headers", DebugHeaders)
@@ -16,10 +17,10 @@ func Handle() {
 	http.HandleFunc("/debug/name", DebugName)
 }
 
-func HandleMux(mux *http.ServeMux) {
-	mux.HandleFunc("/health/liveness", Liveness)
-	mux.HandleFunc("/health/readiness", Readiness)
-	mux.HandleFunc("/health", Health)
+func HandleMux(hc health.Handler, mux *http.ServeMux) {
+	mux.HandleFunc("/health/liveness", hc.Live)
+	mux.HandleFunc("/health/readiness", hc.Ready)
+	mux.HandleFunc("/health", hc.Report)
 	mux.HandleFunc("/metadata", Metadata)
 	mux.HandleFunc("/debug/environment", DebugEnvironmentName)
 	mux.HandleFunc("/debug/headers", DebugHeaders)

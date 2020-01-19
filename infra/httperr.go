@@ -29,13 +29,10 @@ func Error(w http.ResponseWriter, r *http.Request, status int, errors ...interfa
 		switch e := v.(type) {
 		case *APIError:
 			errs = append(errs, *e)
-			break
 		case APIError:
 			errs = append(errs, e)
-			break
 		case string:
 			errs = append(errs, APIError{Source: "service", Message: e})
-			break
 		default:
 			errs = append(errs, APIError{Source: "httpError", Message: fmt.Sprintf("Could not add error type %T", v)})
 		}
@@ -47,6 +44,9 @@ func Error(w http.ResponseWriter, r *http.Request, status int, errors ...interfa
 
 	b, err := json.Marshal(&ErrorResponse{errs})
 	if err == nil {
-		w.Write(b)
+		_, err = w.Write(b)
+		if err != nil {
+			log.Println("[httperr] unable to write error to response writer")
+		}
 	}
 }

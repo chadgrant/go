@@ -6,9 +6,9 @@ import (
 )
 
 func Handle(r *mux.Router) {
-	r.HandleFunc("/health/liveness", infra.Liveness)
-	r.HandleFunc("/health/readiness", infra.Readiness)
-	r.HandleFunc("/health", infra.Health)
+	// r.HandleFunc("/health/liveness", infra.Liveness)
+	// r.HandleFunc("/health/readiness", infra.Readiness)
+	// r.HandleFunc("/health", infra.Health)
 	r.HandleFunc("/metadata", infra.Metadata)
 	r.HandleFunc("/debug/environment", infra.DebugEnvironmentName)
 	r.HandleFunc("/debug/headers", infra.DebugHeaders)

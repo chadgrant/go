@@ -21,7 +21,6 @@ var (
 	GoVersion           string
 
 	startTime = time.Now().UTC()
-	md        = make(map[string]string, 0)
 )
 
 //Cannot get osVersion, osAvgLoad or osArch from GO
@@ -44,14 +43,6 @@ type MetadataResponse struct {
 	OsNumProcessors     int       `json:"osNumProcessors,omitempty"`
 	GoVersion           string    `json:"goVersion,omitempty"`
 	Version             int       `json:"version,omitempty"`
-}
-
-func parseDate(s string) string {
-	t, err := time.Parse(time.UnixDate, s)
-	if err != nil {
-		return err.Error()
-	}
-	return t.Format(time.RFC3339)
 }
 
 func Metadata(w http.ResponseWriter, r *http.Request) {
