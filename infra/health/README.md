@@ -160,3 +160,15 @@ checker := health.NewHealthChecker()
 
 checker.AddReadiness("max-goroutine", time.Second*10, health.GoroutineCountCheck(1000))
 ```
+
+
+# Docker Health Check Sample (Docker-Compose)
+
+```
+    healthcheck:
+      test: "curl -f http://localhost:8080/health/live || exit 1"
+      interval: 30s
+      timeout: 2s
+      retries: 3
+      start_period: 5s
+```
