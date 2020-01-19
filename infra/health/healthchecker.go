@@ -13,15 +13,16 @@ type (
 
 	// healthCheck is an internal state / wrapper mechanism
 	healthCheck struct {
-		Name     string
-		Interval time.Duration
-		Check    executor
+		Name      string
+		Interval  time.Duration
+		GoodUntil time.Time
+		Check     executor
 	}
 
 	// healthChecker is the main type that stores the health checks
 	healthChecker struct {
-		liveness  []*healthCheck
-		readiness []*healthCheck
+		Live  []*healthCheck
+		Ready []*healthCheck
 	}
 
 	// wrapper to curry the exact error instance to the caller so that sentinel error checks work
@@ -34,15 +35,15 @@ type (
 // NewHealthChecker created a health check runner that satisfies the HealthChecker interface
 func NewHealthChecker() HealthChecker {
 	return &healthChecker{
-		liveness:  make([]*healthCheck, 0),
-		readiness: make([]*healthCheck, 0),
+		Live:  make([]*healthCheck, 0),
+		Ready: make([]*healthCheck, 0),
 	}
 }
 
 // AddLiveness implementation of HealthChecker interface. See interface docs
-func (h *healthChecker) AddLiveness(name string, check Check) {
-	hc := &healthCheck{name, 0, wrapChecker(check)}
-	h.liveness = append(h.liveness, hc)
+func (h *healthChecker) AddLiveness(name string, interval time.Duration, check Check) {
+	hc := &healthCheck{name, interval, time.Now(), wrapChecker(check)}
+	h.Live = append(h.Live, hc)
 }
 
 func (h *healthChecker) AddLivenessBackground(name string, interval time.Duration, check Check) {
@@ -50,13 +51,13 @@ func (h *healthChecker) AddLivenessBackground(name string, interval time.Duratio
 }
 
 func (h *healthChecker) AddLivenessBackgroundWithContext(ctx context.Context, name string, interval time.Duration, check Check) {
-	hc := &healthCheck{name, interval, background(ctx, name, interval, wrapChecker(check))}
-	h.liveness = append(h.liveness, hc)
+	hc := &healthCheck{name, interval, time.Now(), background(ctx, name, interval, wrapChecker(check))}
+	h.Live = append(h.Live, hc)
 }
 
-func (h *healthChecker) AddReadiness(name string, check Check) {
-	hc := &healthCheck{name, 0, wrapChecker(check)}
-	h.readiness = append(h.readiness, hc)
+func (h *healthChecker) AddReadiness(name string, interval time.Duration, check Check) {
+	hc := &healthCheck{name, interval, time.Now(), wrapChecker(check)}
+	h.Ready = append(h.Ready, hc)
 }
 
 func (h *healthChecker) AddReadinessBackground(name string, interval time.Duration, check Check) {
@@ -64,8 +65,8 @@ func (h *healthChecker) AddReadinessBackground(name string, interval time.Durati
 }
 
 func (h *healthChecker) AddReadinessBackgroundWithContext(ctx context.Context, name string, interval time.Duration, check Check) {
-	hc := &healthCheck{name, interval, background(ctx, name, interval, wrapChecker(check))}
-	h.readiness = append(h.readiness, hc)
+	hc := &healthCheck{name, interval, time.Now(), background(ctx, name, interval, wrapChecker(check))}
+	h.Ready = append(h.Ready, hc)
 }
 
 func wrapChecker(check Check) executor {
@@ -105,6 +106,11 @@ func runChecks(checks ...[]*healthCheck) <-chan resultWrapper {
 		wg.Add(len(g))
 
 		for _, c := range g {
+			//don't run the test if it's not stale
+			if !time.Now().After(c.GoodUntil) {
+				wg.Done()
+				continue
+			}
 			go func(c *healthCheck) {
 
 				d, t, err := c.Check()
@@ -124,6 +130,8 @@ func runChecks(checks ...[]*healthCheck) <-chan resultWrapper {
 				} else {
 					r.Result.Status = success
 				}
+
+				c.GoodUntil = time.Now().Add(c.Interval)
 
 				resultsC <- r
 				wg.Done()

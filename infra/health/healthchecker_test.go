@@ -9,7 +9,7 @@ import (
 
 var errIntentional = errors.New("intentional error")
 
-type HealthCheckAdd func(string, Check)
+type HealthCheckAdd func(string, time.Duration, Check)
 type HealthCheckReporter func() ([]Result, error)
 
 func TestHealthChecker(t *testing.T) {
@@ -39,7 +39,7 @@ func checkSucceeds(t *testing.T, name string, add HealthCheckAdd, report HealthC
 
 	checkRun := false
 
-	add(fmt.Sprintf("%s-Test", name), func() error {
+	add(fmt.Sprintf("%s-Test", name), 0, func() error {
 		checkRun = true
 		return nil
 	})
@@ -62,7 +62,7 @@ func testCheckReportsFailure(t *testing.T, name string, add HealthCheckAdd, repo
 
 	checkRun := false
 
-	add(fmt.Sprintf("%s-Test", name), func() error {
+	add(fmt.Sprintf("%s-Test", name), 0, func() error {
 		checkRun = true
 		return errIntentional
 	})
@@ -87,10 +87,10 @@ func testCheckReportsFailure(t *testing.T, name string, add HealthCheckAdd, repo
 
 func TestHealthReadinessAlsoRunsLivenessChecks(t *testing.T) {
 	checker := NewHealthChecker()
-	checker.AddReadiness("Test-Readiness", func() error {
+	checker.AddReadiness("Test-Readiness", 0, func() error {
 		return nil
 	})
-	checker.AddLiveness("Test-Liveness", func() error {
+	checker.AddLiveness("Test-Liveness", 0, func() error {
 		return nil
 	})
 
@@ -104,16 +104,49 @@ func TestHealthReadinessAlsoRunsLivenessChecks(t *testing.T) {
 	}
 }
 
+func TestHealthOnlyRunsStaleChecks(t *testing.T) {
+	testWasRun := 0
+
+	checker := NewHealthChecker()
+	checker.AddReadiness("Test-Readiness", time.Millisecond*50, func() error {
+		testWasRun++
+		return nil
+	})
+
+	_, err := checker.Readiness()
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+	_, err = checker.Readiness()
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	if testWasRun > 1 {
+		t.Errorf("test should not have been run twice")
+	}
+
+	time.Sleep(time.Millisecond * 100)
+	_, err = checker.Readiness()
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+
+	if testWasRun != 2 {
+		t.Errorf("test should not have been run since it is considered stale")
+	}
+}
+
 func TestHealthLivenessDoesNotRunReadinessChecks(t *testing.T) {
 	livenessRun := false
 	readinessRun := false
 
 	checker := NewHealthChecker()
-	checker.AddReadiness("Test-Readiness", func() error {
+	checker.AddReadiness("Test-Readiness", 0, func() error {
 		readinessRun = true
 		return nil
 	})
-	checker.AddLiveness("Test-Liveness", func() error {
+	checker.AddLiveness("Test-Liveness", 0, func() error {
 		livenessRun = true
 		return nil
 	})
@@ -137,12 +170,12 @@ func TestHealthReport(t *testing.T) {
 	readinessRun := false
 
 	checker := NewHealthChecker()
-	checker.AddReadiness("Test-Readiness", func() error {
+	checker.AddReadiness("Test-Readiness", 0, func() error {
 		readinessRun = true
 		time.Sleep(time.Millisecond * 10)
 		return nil
 	})
-	checker.AddLiveness("Test-Liveness", func() error {
+	checker.AddLiveness("Test-Liveness", 0, func() error {
 		livenessRun = true
 		time.Sleep(time.Millisecond * 10)
 		return nil
@@ -212,11 +245,11 @@ func BenchmarkHealthChecker(b *testing.B) {
 	checker := NewHealthChecker()
 
 	for i := 0; i < 1; i++ {
-		checker.AddLiveness(fmt.Sprintf("live-%d", i), func() error {
+		checker.AddLiveness(fmt.Sprintf("live-%d", i), 0, func() error {
 			return nil
 		})
 
-		checker.AddReadiness(fmt.Sprintf("readiness-%d", i), func() error {
+		checker.AddReadiness(fmt.Sprintf("readiness-%d", i), 0, func() error {
 			return nil
 		})
 	}

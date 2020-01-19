@@ -33,7 +33,7 @@ Used for reporting / human readable & automated tooling
 | Property                  | Description                                                                       |     Example               |
 | --------------------------|-----------------------------------------------------------------------------------|---------------------------|
 | report_as_of_utc          | The time at which this report was generated (this may not be the current time)    | 2015-03-12T19:40:18.877Z  |
-| interval_ms               | How often the health checks are run in seconds                                    | 10                        |
+| duration_ms               | Sum of all check durations                                                        | 10                        |
 | liveness                  | array of liveness healthcheck test reports                                        |                           |
 | liveness[].name           | name of the healthcheck test                                                      | sql                       |
 | liveness[].duration_ms    | Number of milliseconds taken to run the test                                      | 100                       |
@@ -48,15 +48,19 @@ Used for reporting / human readable & automated tooling
 | readiness[].tested_at_utc | The last time the test was run                                                    | 2015-03-12T19:40:18.877Z  |
 
 # Basic Usage
+
+## Note!
+Be warned, you will essentially be ddos'ing things if you choose short staleness times and this is deployed across all microservices (for example: if they all do a http chek every 10 seconds to the same host * how many services are running across all environments) ... the host being used as the health check could be annoyed. 
+
 ```go
     checker := health.NewHealthChecker()
     
-	checker.AddLiveness("Liveness Test", func() error {
+	checker.AddLiveness("Liveness Test", time.Second*10, func() error {
         //run test
 		return nil
     })
     
-    checker.AddReadiness("Readiness Test", func() error {
+    checker.AddReadiness("Readiness Test", time.Second*10, func() error {
         // run test	
 		return nil
 	})
@@ -69,7 +73,7 @@ You should define a timeout for checks
 ```go
     checker := health.NewHealthChecker()
     
-	checker.AddLiveness("Liveness Test", func() error {
+	checker.AddLiveness("Liveness Test",  time.Second*10, func() error {
         ctx, cancel := context.WithTimeout(context.Background(), 1 * time.Second)
         defer cancel()
         //run test
@@ -133,26 +137,26 @@ For the test to run continuosly, register a background check with a duration of 
 ```go
 checker := health.NewHealthChecker()
 
-checker.AddReadiness("google-http-connection", health.TCPDialCheck("google.com:80", 5*time.Second))
+checker.AddReadiness("google-http-connection",  time.Second*10, health.TCPDialCheck("google.com:80", 5*time.Second))
 ```
 
 ## DatabasePingCheck
 ```go
 checker := health.NewHealthChecker()
 
-checker.AddReadiness("sql-db-ping", health.DatabasePingCheck(db, 1*time.Second))
+checker.AddReadiness("sql-db-ping", time.Second*10, health.DatabasePingCheck(db, 1*time.Second))
 ```
 
 ## DNSResolveCheck
 ```go
 checker := health.NewHealthChecker()
 
-checker.AddReadiness("google-dns-resolution", health.DNSResolveCheck("google.com", 5*time.Second))
+checker.AddReadiness("google-dns-resolution", time.Second*10, health.DNSResolveCheck("google.com", 5*time.Second))
 ```
 
 ## GoroutineCountCheck
 ```go
 checker := health.NewHealthChecker()
 
-checker.AddReadiness("max-goroutine", health.GoroutineCountCheck(1000))
+checker.AddReadiness("max-goroutine", time.Second*10, health.GoroutineCountCheck(1000))
 ```

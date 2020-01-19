@@ -18,17 +18,26 @@ type (
 		// indicates that this instance is unhealthy, not some upstream dependency.
 		// Every liveness check is also included as a readiness check.
 		// Executed lazily (when report requested)
-		AddLiveness(name string, check Check)
+		// name - name of the health check
+		// interval - how long the report should be considered valid (to prevent ddosing health checks)
+		// check - the function to be checked
+		AddLiveness(name string, interval time.Duration, check Check)
 
 		// AddLivenessBackground same as AddLiveness but executes on an interval
 		// ctx: Context for cancellation
 		// name: Name of the health check
 		// duration: How often the check should be run
 		// If your check takes longer than the interval to execute, the next execution will happen immediately.
-		AddLivenessBackground(name string, duration time.Duration, check Check)
+		// name - name of the health check
+		// interval - how long the report should be considered valid (to prevent ddosing health checks)
+		// check - the function to be checked
+		AddLivenessBackground(name string, interval time.Duration, check Check)
 
 		// AddLivenessBackgroundWithContext same as AddLivenessBackground but with the ability to cancel
 		// Note: if you don't need to cancel execution (because this runs forever), use AddLivenessBackground()
+		// name - name of the health check
+		// interval - how long the report should be considered valid (to prevent ddosing health checks)
+		// check - the function to be checked
 		AddLivenessBackgroundWithContext(ctx context.Context, name string, duration time.Duration, check Check)
 
 		// AddReadiness adds a check that indicates that this instance of the
@@ -36,7 +45,10 @@ type (
 		// or some transient failure. If a readiness check fails, this instance
 		// should no longer receiver requests, but should not be restarted or
 		// destroyed. Executed lazily (when report requested)
-		AddReadiness(name string, check Check)
+		// name - name of the health check
+		// interval - how long the report should be considered valid (to prevent ddosing health checks)
+		// check - the function to be checked
+		AddReadiness(name string, interval time.Duration, check Check)
 
 		// AddReadinessBackground same as AddReadiness but executes on an interval
 		// ctx: Context for cancellation
@@ -44,11 +56,17 @@ type (
 		// duration: How often the check should be run
 		// If your check takes longer than the interval to execute, the next execution will happen immediately.
 		// Note: if you don't need to cancel execution (because this runs forever), use AddReadiness()
-		AddReadinessBackground(name string, duration time.Duration, check Check)
+		// name - name of the health check
+		// interval - how long the report should be considered valid (to prevent ddosing health checks)
+		// check - the function to be checked
+		AddReadinessBackground(name string, interval time.Duration, check Check)
 
 		// AddReadinessBackgroundWithContext same as AddReadinessBackground but with the ability to cancel
 		// Note: if you don't need to cancel execution (because this runs forever), use AddReadinessBackground()
-		AddReadinessBackgroundWithContext(ctx context.Context, name string, duration time.Duration, check Check)
+		// name - name of the health check
+		// interval - how long the report should be considered valid (to prevent ddosing health checks)
+		// check - the function to be checked
+		AddReadinessBackgroundWithContext(ctx context.Context, name string, interval time.Duration, check Check)
 
 		// Report returns a roll up report of both liveness and readiness results
 		Report() (Report, error)
@@ -87,7 +105,6 @@ type (
 	Report struct {
 		ReportAsOf *time.Time `json:"report_as_of_utc"`
 		Duration   uint32     `json:"duration_ms"`
-		Interval   uint32     `json:"interval_ms,omitempty"`
 		Liveness   []Result   `json:"liveness"`
 		Readiness  []Result   `json:"readiness"`
 	}

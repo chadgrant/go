@@ -7,13 +7,12 @@ import (
 func (h *healthChecker) Report() (Report, error) {
 	t := time.Now().UTC()
 
-	l, ld, lerr := collect(h.liveness)
-	r, rd, rerr := collect(h.readiness)
+	l, ld, lerr := collect(h.Live)
+	r, rd, rerr := collect(h.Ready)
 
 	rpt := Report{
 		ReportAsOf: &t,
 		Duration:   ld + rd,
-		Interval:   0,
 		Liveness:   l,
 		Readiness:  r,
 	}
@@ -26,11 +25,11 @@ func (h *healthChecker) Report() (Report, error) {
 }
 
 func (h *healthChecker) Liveness() (results []Result, err error) {
-	results, _, err = collect(h.liveness)
+	results, _, err = collect(h.Live)
 	return
 }
 
 func (h *healthChecker) Readiness() (results []Result, err error) {
-	results, _, err = collect(h.liveness, h.readiness)
+	results, _, err = collect(h.Live, h.Ready)
 	return
 }

@@ -19,9 +19,9 @@ func main() {
 
 	checker := health.NewHealthChecker()
 
-	checker.AddReadiness("max-goroutine", health.GoroutineCountCheck(1000))
-	checker.AddReadiness("google-http-connection", health.TCPDialCheck("google.com:80", 5*time.Second))
-	checker.AddReadiness("google-dns-resolution", health.DNSResolveCheck("google.com", 5*time.Second))
+	checker.AddReadiness("max-goroutine", time.Millisecond*500, health.GoroutineCountCheck(1000))
+	checker.AddReadiness("google-http-connection", time.Second*10, health.TCPDialCheck("google.com:80", 5*time.Second))
+	checker.AddReadiness("google-dns-resolution", time.Second*10, health.DNSResolveCheck("google.com", 5*time.Second))
 
 	checker.AddLivenessBackground("Liveness-Test-That-Sleeps", time.Second*3, func() error {
 		log.Println("running liveness background test")
@@ -29,7 +29,7 @@ func main() {
 		return nil
 	})
 
-	checker.AddLiveness("Liveness-Lazy-Test-That-Sleeps-A-Little", func() error {
+	checker.AddLiveness("Liveness-Lazy-Test-That-Sleeps-A-Little", time.Millisecond*150, func() error {
 		//log.Println("running lazy liveness test")
 		time.Sleep(time.Millisecond * 50)
 		return nil
@@ -41,7 +41,7 @@ func main() {
 		return nil
 	})
 
-	checker.AddReadiness("Readiness-Lazy-Test-That-Sleeps-A-Little", func() error {
+	checker.AddReadiness("Readiness-Lazy-Test-That-Sleeps-A-Little", time.Millisecond*150, func() error {
 		//log.Println("running lazy readiness test")
 		time.Sleep(time.Millisecond * 50)
 		return nil
