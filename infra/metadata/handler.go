@@ -2,14 +2,14 @@ package metadata
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"runtime"
-	"github.com/google/martian/log"
 )
 
 type handler struct{}
 
-// NewHandler returds Handler interface for convience of wiring up to existing systems
+// NewHandler returns Handler interface for convience of wiring up to existing systems
 func NewHandler() Handler {
 	return &handler{}
 }
@@ -37,7 +37,7 @@ func (h *handler) Metadata(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	enc := json.NewEncoder(w)
-	if err := enc.Encode(rsp); err !=nil {
-		log.Errorf("could not encode json response for /metadata %v",err)
+	if err := enc.Encode(rsp); err != nil {
+		log.Printf("could not encode json response for /metadata %v", err)
 	}
 }
