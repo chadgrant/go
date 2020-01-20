@@ -26,19 +26,18 @@ type (
 		// AddLivenessBackground same as AddLiveness but executes on an interval
 		// ctx: Context for cancellation
 		// name: Name of the health check
-		// duration: How often the check should be run
+		// interval: How often the check should be run
 		// If your check takes longer than the interval to execute, the next execution will happen immediately.
-		// name - name of the health check
-		// interval - how long the report should be considered valid (to prevent ddosing health checks)
 		// check - the function to be checked
 		AddLivenessBackground(name string, interval time.Duration, check Check)
 
 		// AddLivenessBackgroundWithContext same as AddLivenessBackground but with the ability to cancel
 		// Note: if you don't need to cancel execution (because this runs forever), use AddLivenessBackground()
+		// ctx: Context for cancellation
 		// name - name of the health check
-		// interval - how long the report should be considered valid (to prevent ddosing health checks)
+		// interval - How often the check should be run
 		// check - the function to be checked
-		AddLivenessBackgroundWithContext(ctx context.Context, name string, duration time.Duration, check Check)
+		AddLivenessBackgroundWithContext(ctx context.Context, name string, interval time.Duration, check Check)
 
 		// AddReadiness adds a check that indicates that this instance of the
 		// application is currently unable to serve requests because of an upstream
@@ -53,18 +52,17 @@ type (
 		// AddReadinessBackground same as AddReadiness but executes on an interval
 		// ctx: Context for cancellation
 		// name: Name of the health check
-		// duration: How often the check should be run
+		// interval: How often the check should be run
+		// check - the function to be checked
 		// If your check takes longer than the interval to execute, the next execution will happen immediately.
 		// Note: if you don't need to cancel execution (because this runs forever), use AddReadiness()
-		// name - name of the health check
-		// interval - how long the report should be considered valid (to prevent ddosing health checks)
-		// check - the function to be checked
 		AddReadinessBackground(name string, interval time.Duration, check Check)
 
 		// AddReadinessBackgroundWithContext same as AddReadinessBackground but with the ability to cancel
 		// Note: if you don't need to cancel execution (because this runs forever), use AddReadinessBackground()
+		// ctx: Context for cancellation
 		// name - name of the health check
-		// interval - how long the report should be considered valid (to prevent ddosing health checks)
+		// interval - how often the check should be run
 		// check - the function to be checked
 		AddReadinessBackgroundWithContext(ctx context.Context, name string, interval time.Duration, check Check)
 
@@ -99,7 +97,6 @@ type (
 	// typically /health
 	// ReportAsOf: When the report was generated
 	// Duration: How long all the reports took SUM(Results.duration)
-	// Interval: How long the report is considered fresh and should not be re-run
 	// Liveness: Results for liveness checks
 	// Report: Results for readiness checks
 	Report struct {

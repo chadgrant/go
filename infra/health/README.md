@@ -163,7 +163,7 @@ checker.AddReadiness("max-goroutine", time.Second*10, health.GoroutineCountCheck
 
 ```
     healthcheck:
-      test: "curl -f http://localhost:8080/health/live || exit 1"
+      test: "curl -f http://localhost:8080/live || exit 1"
       interval: 30s
       timeout: 2s
       retries: 3
