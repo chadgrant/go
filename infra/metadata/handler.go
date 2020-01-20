@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"runtime"
+	"github.com/google/martian/log"
 )
 
 type handler struct{}
@@ -23,7 +24,6 @@ func (h *handler) Metadata(w http.ResponseWriter, r *http.Request) {
 		Service:         Service,
 		Friendly:        Friendly,
 		Description:     Description,
-		Url:             Url,
 		Repo:            Repo,
 		BuildNumber:     BuildNumber,
 		BuiltBy:         BuiltBy,
@@ -37,5 +37,7 @@ func (h *handler) Metadata(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	enc := json.NewEncoder(w)
-	enc.Encode(rsp)
+	if err := enc.Encode(rsp); err !=nil {
+		log.Errorf("could not encode json response for /metadata %v",err)
+	}
 }

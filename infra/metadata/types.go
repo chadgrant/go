@@ -11,7 +11,6 @@ var (
 	Service         string
 	Friendly        string
 	Description     string
-	Url             string
 	Repo            string
 	BuildNumber     string
 	BuiltBy         string
@@ -22,30 +21,27 @@ var (
 	Version         string
 )
 
-// Response is the metadata response payload
-// Vendor: Vendor of the service i.e. Google
-// Group: Group responsible for the service. i.e. "Growth"
-// Service: Short name of the service i.e. "member_api"
-// Friendly: Human friendly name for the service i.e. "Member API"
-// Description: Optional description of the service
-// Url: Optional URL of the service
-// Repo: Optional Repo for the servicve
-// BuildNumber: build number of the service i.e. 1.0.0
-// BuiltBy: user that triggered the build
-// BuildTime: date/time of build
-// Githash: git hash of the build
-// GitBranch: branch the build was built out of
-// CompilerVersion: what version of the go compiler used in the build
-// Version: version of this schema
-// Note: Cannot get osVersion, osAvgLoad or osArch from GO arch is an "educated" guess/lie
 type (
+	// Response is the metadata response payload
+	// Vendor: Vendor of the service i.e. Google
+	// Group: Group responsible for the service. i.e. "Growth"
+	// Service: Short name of the service i.e. "member_api"
+	// Friendly: Human friendly name for the service i.e. "Member API"
+	// Description: Optional description of the service
+	// Repo: Optional Repo for the servicve
+	// BuildNumber: build number of the service i.e. 1.0.0
+	// BuiltBy: user that triggered the build
+	// BuildTime: date/time of build
+	// Githash: git hash of the build
+	// GitBranch: branch the build was built out of
+	// CompilerVersion: what version of the go compiler used in the build
+	// Version: version of this schema
 	Response struct {
 		Vendor          string `json:"vendor,omitempty"`
 		Group           string `json:"group,omitempty"`
 		Service         string `json:"service,omitempty"`
 		Friendly        string `json:"friendly,omitempty"`
 		Description     string `json:"description,omitempty"`
-		Url             string `json:"service_url,omitempty"`
 		Repo            string `json:"build_repo,omitempty"`
 		BuildNumber     string `json:"build_number,omitempty"`
 		BuiltBy         string `json:"built_by,omitempty"`

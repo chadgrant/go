@@ -198,7 +198,7 @@ func TestHealthReport(t *testing.T) {
 		t.Error("report didnt return time it was executed")
 	}
 
-	if rpt.Duration <= 0 {
+	if rpt.Duration == 0 {
 		t.Errorf("report did not return time taken to run tests %v", rpt.Duration)
 	}
 
