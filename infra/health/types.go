@@ -98,12 +98,62 @@ type (
 	// ReportAsOf: When the report was generated
 	// Duration: How long all the reports took SUM(Results.duration)
 	// Liveness: Results for liveness checks
-	// Report: Results for readiness checks
+	// Readiness: Results for readiness checks
+	// HostName: Name of the current machine serving this request
+	// UpSince: timestamp of when the service started
+	// OsArch: architecture of the current host
+	// OsName: os name of the current host
+	// OsNumProcessors: num of procs on the host
+	// GoVersion: version of the go runtime
+	// Version: version of this schema
 	Report struct {
-		ReportAsOf *time.Time `json:"report_as_of_utc"`
-		Duration   uint32     `json:"duration_ms"`
-		Liveness   []Result   `json:"liveness"`
-		Readiness  []Result   `json:"readiness"`
+		ReportAsOf      *time.Time `json:"report_as_of_utc"`
+		Duration        uint32     `json:"duration_ms"`
+		Liveness        []Result   `json:"liveness"`
+		Readiness       []Result   `json:"readiness"`
+		HostName        string     `json:"host_name,omitempty"`
+		UpSince         time.Time  `json:"up_since,omitempty"`
+		OsArch          string     `json:"os_arch,omitempty"`
+		OsName          string     `json:"os_name,omitempty"`
+		OsNumProcessors int        `json:"os_num_processors"`
+		OsGoRoutines    int        `json:"os_num_goroutines"`
+		GoVersion       string     `json:"go_version,omitempty"`
+		Version         int        `json:"version,omitempty"`
+		Memory          Memory     `json:"memory"`
+	}
+
+	// Memory details of the memory profile
+	// https://golang.org/pkg/runtime/#MemStats
+	Memory struct {
+		Alloc         uint64  `json:"alloc,omitempty"`
+		TotalAlloc    uint64  `json:"total_alloc,omitempty"`
+		Sys           uint64  `json:"sys,omitempty"`
+		Lookups       uint64  `json:"lookups,omitempty"`
+		Mallocs       uint64  `json:"mallocs,omitempty"`
+		Frees         uint64  `json:"frees,omitempty"`
+		HeapAlloc     uint64  `json:"heap_allocs,omitempty"`
+		HeapSys       uint64  `json:"heap_sys,omitempty"`
+		HeapIdle      uint64  `json:"heap_idle,omitempty"`
+		HeapInuse     uint64  `json:"heap_in_use,omitempty"`
+		HeapReleased  uint64  `json:"heap_released,omitempty"`
+		HeapObjects   uint64  `json:"heap_objects,omitempty"`
+		StackInuse    uint64  `json:"stack_in_use,omitempty"`
+		StackSys      uint64  `json:"stack_sys,omitempty"`
+		MSpanInuse    uint64  `json:"mspan_inuse,omitempty"`
+		MSpanSys      uint64  `json:"mspan_sys,omitempty"`
+		MCacheInuse   uint64  `json:"mcache_inuse,omitempty"`
+		MCacheSys     uint64  `json:"mcache_sys,omitempty"`
+		BuckHashSys   uint64  `json:"buck_hash_sys,omitempty"`
+		GCSys         uint64  `json:"gc_sys,omitempty"`
+		OtherSys      uint64  `json:"other_sys,omitempty"`
+		NextGC        uint64  `json:"next_gc,omitempty"`
+		LastGC        uint64  `json:"last_gc,omitempty"`
+		PauseTotalNs  uint64  `json:"pause_total_n,omitempty"`
+		NumGC         uint32  `json:"num_gc,omitempty"`
+		NumForcedGC   uint32  `json:"num_forced_gc,omitempty"`
+		GCCPUFraction float64 `json:"gcc_cpu_fraction,omitempty"`
+		EnableGC      bool    `json:"enable_gc"`
+		DebugGC       bool    `json:"debug_gc"`
 	}
 
 	// Result is the result of the health check test
