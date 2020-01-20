@@ -45,7 +45,7 @@ type (
 		Service         string `json:"service,omitempty"`
 		Friendly        string `json:"friendly,omitempty"`
 		Description     string `json:"description,omitempty"`
-		Url             string `json:"service_url"`
+		Url             string `json:"service_url,omitempty"`
 		Repo            string `json:"build_repo,omitempty"`
 		BuildNumber     string `json:"build_number,omitempty"`
 		BuiltBy         string `json:"built_by,omitempty"`
