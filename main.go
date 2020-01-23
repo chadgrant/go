@@ -9,7 +9,9 @@ import (
 
 	"github.com/chadgrant/go-http-infra/infra"
 	"github.com/chadgrant/go-http-infra/infra/health"
+
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -17,7 +19,11 @@ func main() {
 	port := *flag.Int("port", infra.GetEnvVarInt("SVC_PORT", 8080), "default port 8080")
 	r := mux.NewRouter()
 
-	checker := health.NewHealthChecker()
+	gorillaW := func(s string, w func(http.ResponseWriter, *http.Request)) {
+		r.HandleFunc(s, w)
+	}
+
+	checker, _ := infra.RegisterInfraHandlers(gorillaW)
 
 	checker.AddReadiness("max-goroutine", time.Millisecond*500, health.GoroutineCountCheck(1000))
 	checker.AddReadiness("google-http-connection", time.Second*10, health.TCPDialCheck("google.com:80", 5*time.Second))
@@ -47,10 +53,15 @@ func main() {
 		return nil
 	})
 
-	h := health.NewHandler(checker)
-	r.HandleFunc("/live", h.Live)
-	r.HandleFunc("/ready", h.Ready)
-	r.HandleFunc("/health", h.Report)
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowCredentials: true,
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
+		ExposedHeaders:   []string{"Location"},
+		MaxAge:           86400,
+	})
+
+	c.Handler(r)
 
 	log.Printf("Started, serving at %s:%d\n", host, port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), r))

@@ -6,28 +6,18 @@ import (
 	"net/http"
 )
 
-func Handle(hc health.Handler) {
-	md := metadata.NewHandler()
-	http.HandleFunc("/live", hc.Live)
-	http.HandleFunc("/ready", hc.Ready)
-	http.HandleFunc("/health", hc.Report)
-	http.HandleFunc("/metadata", md.Metadata)
-	http.HandleFunc("/debug/environment", DebugEnvironmentName)
-	http.HandleFunc("/debug/headers", DebugHeaders)
-	http.HandleFunc("/debug/time", DebugTime)
-	http.HandleFunc("/debug/error", DebugError)
-	http.HandleFunc("/debug/name", DebugName)
-}
-
-func HandleMux(hc health.Handler, mux *http.ServeMux) {
-	md := metadata.NewHandler()
-	mux.HandleFunc("/live", hc.Live)
-	mux.HandleFunc("/ready", hc.Ready)
-	mux.HandleFunc("/health", hc.Report)
-	mux.HandleFunc("/metadata", md.Metadata)
-	mux.HandleFunc("/debug/environment", DebugEnvironmentName)
-	mux.HandleFunc("/debug/headers", DebugHeaders)
-	mux.HandleFunc("/debug/time", DebugTime)
-	mux.HandleFunc("/debug/error", DebugError)
-	mux.HandleFunc("/debug/name", DebugName)
+func RegisterInfraHandlers(register func(string, func(http.ResponseWriter, *http.Request))) (hc health.HealthChecker, md metadata.Handler) {
+	md = metadata.NewHandler()
+	hc = health.NewHealthChecker()
+	hh := health.NewHandler(hc)
+	register("/live", hh.Live)
+	register("/ready", hh.Ready)
+	register("/health", hh.Report)
+	register("/metadata", md.Metadata)
+	register("/debug/environment", DebugEnvironmentName)
+	register("/debug/headers", DebugHeaders)
+	register("/debug/time", DebugTime)
+	register("/debug/error", DebugError)
+	register("/debug/name", DebugName)
+	return
 }
