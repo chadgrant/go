@@ -22,7 +22,7 @@ var (
 )
 
 type (
-	// Response is the metadata response payload
+	// Metadata is the metadata response payload
 	// Vendor: Vendor of the service i.e. Google
 	// Group: Group responsible for the service. i.e. "Growth"
 	// Service: Short name of the service i.e. "member_api"
@@ -36,7 +36,7 @@ type (
 	// GitBranch: branch the build was built out of
 	// CompilerVersion: what version of the go compiler used in the build
 	// Version: version of this schema
-	Response struct {
+	Metadata struct {
 		Vendor          string `json:"vendor,omitempty"`
 		Group           string `json:"group,omitempty"`
 		Service         string `json:"service,omitempty"`

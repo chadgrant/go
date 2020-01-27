@@ -37,7 +37,7 @@ func TestHandler(t *testing.T) {
 		t.Fatalf("handler response failed: %v", err)
 	}
 
-	resp := &Response{}
+	resp := &Metadata{}
 	if err := json.Unmarshal(js, resp); err != nil {
 		t.Fatalf("could not unmarshal response: %v", err)
 	}
