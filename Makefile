@@ -43,10 +43,10 @@ help:
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .PHONY: build
-build: ## Builds go binary
+build: generate ## Builds go binary
 	go build -ldflags $(LDFLAGS)
 
-run: ## Runs the main.go file
+run: generate ## Runs the main.go file
 	go run -ldflags $(LDFLAGS) main.go
 
 .PHONY: test
@@ -63,30 +63,38 @@ clean: ## Cleans directory of temp files
 	-@rm -f coverage.html profile.out cpu.prof coverage.txt
 
 tidy: ## Run goimports and go fmt on all *.go files
-ifeq (,$(shell type goimports 2>/dev/null))
-	go get golang.org/x/tools/cmd/goimports
-endif
+	@if ! type "goimports" > /dev/null 2>&1; then \
+		go get -u golang.org/x/tools/cmd/goimports; \
+	fi
 	@go fmt ./...
 	@goimports -w $(shell go list -f {{.Dir}} ./... | grep -v /vendor/)
 
 lint: ## Execute linter
-ifeq (,$(shell type golangci-lint 2>/dev/null))
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-		| sh -s -- -b $(shell go env GOPATH)/bin v1.22.2
-endif
+	@if ! type "golangci-lint" > /dev/null 2>&1; then \
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
+		| sh -s -- -b $(shell go env GOPATH)/bin v1.22.2; \
+	fi
 	golangci-lint run --timeout=300s --skip-dirs-use-default --exclude="should have comment or be unexported"  ./...
 
 reportcard: ## Display go report card status
-ifeq (,$(shell type gometalinter 2>/dev/null))
-	## has not transitioned to golangci-lint yet
-	cd $(GOPATH); curl -L https://git.io/vp6lP | sh
-endif
-ifeq (,$(shell type goreportcard-cli 2>/dev/null))
-	go get github.com/gojp/goreportcard/cmd/goreportcard-cli
-endif
+	@if ! type "gometalinter" > /dev/null 2>&1; then \
+		cd $(GOPATH); curl -L https://git.io/vp6lP | sh; \
+	fi 
+	@if ! type "goreportcard-cli" > /dev/null 2>&1; then \
+		go get github.com/gojp/goreportcard/cmd/goreportcard-cli; \
+	fi
 	goreportcard-cli
 
 cover: ## Run go code coverage tool
 	@go test -covermode=atomic -coverpkg=./... -coverprofile=profile.out ./...
 	@go tool cover -func=profile.out
 	@go tool cover -html=profile.out -o coverage.html
+
+generate: embed ## Generated go code
+
+embed: ## Embed static resources (go-bindata)
+	@if ! type "go-bindata" > /dev/null 2>&1; then \
+		go get -u github.com/go-bindata/go-bindata/...; \
+	fi
+	cd ./infra/health; go-bindata -pkg health *.json
+	cd ./infra/metadata; go-bindata -pkg metadata *.json

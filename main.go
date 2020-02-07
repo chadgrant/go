@@ -23,7 +23,13 @@ func main() {
 		r.HandleFunc(s, w)
 	}
 
-	checker, _ := infra.RegisterInfraHandlers(gorillaW)
+	checker, _, sr, err := infra.RegisterInfraHandlers(gorillaW)
+	if err != nil {
+		panic(err)
+	}
+	if err := sr.AddDirectory("./infra/schema/test-schemas"); err != nil {
+		panic(err)
+	}
 
 	checker.AddReadiness("max-goroutine", time.Millisecond*500, health.GoroutineCountCheck(1000))
 	checker.AddReadiness("google-http-connection", time.Second*10, health.TCPDialCheck("google.com:80", 5*time.Second))
