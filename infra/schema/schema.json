@@ -2,26 +2,33 @@
     "$id": "http://schemas.sentex.io/service/schemalist.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
-        "registeredschema" : {
-            "type" : "object",
+        "registeredschema": {
+            "type": "object",
             "properties": {
-                "uri" : {
+                "uri": {
                     "description": "URI identifier of schema",
-                    "type" : "string",
+                    "type": "string",
                     "format": "uri"
                 },
-                "url" : {
+                "url": {
                     "description": "URL of where to retrieve schema",
-                    "type" : "string",
+                    "type": "string",
                     "format": "uri"
                 }
             },
-            "required": ["uri","url"]
+            "required": [
+                "uri",
+                "url"
+            ]
         }
     },
     "description": "list of schemas the service has loaded",
     "type": "array",
-    "items" : {
-        "allOf": [{"$ref" : "#/definitions/registeredschema" }]
+    "items": {
+        "allOf": [
+            {
+                "$ref": "#/definitions/registeredschema"
+            }
+        ]
     }
 }
