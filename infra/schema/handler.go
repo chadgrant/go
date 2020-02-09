@@ -27,6 +27,8 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 		schemas = append(schemas, schema{k, fmt.Sprintf("http://%s/schema?key=%s", r.Host, url.PathEscape(k))})
 	}
 
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
 	if err := json.NewEncoder(w).Encode(schemas); err != nil {
 		log.Printf("could not encode schemas json in handler %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -36,6 +38,8 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	key := r.URL.Query().Get("key")
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	for k, v := range h.registry.Registered() {
 		if strings.EqualFold(k, key) {
