@@ -1,5 +1,5 @@
 {
-    "$id": "http://schemas.sentex.io/health.json",
+    "$id": "http://schemas.sentex.io/service/health.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "description": "health check reports",
     "definitions": {
