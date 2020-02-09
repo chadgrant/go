@@ -9,6 +9,7 @@ import (
 
 	"github.com/chadgrant/go-http-infra/infra"
 	"github.com/chadgrant/go-http-infra/infra/health"
+	"github.com/chadgrant/go-http-infra/infra/schema"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -19,15 +20,16 @@ func main() {
 	port := *flag.Int("port", infra.GetEnvVarInt("SVC_PORT", 8080), "default port 8080")
 	r := mux.NewRouter()
 
-	gorillaW := func(s string, w func(http.ResponseWriter, *http.Request)) {
+	gorillaW := func(s string, w http.HandlerFunc) {
 		r.HandleFunc(s, w)
 	}
 
-	checker, _, sr, err := infra.RegisterInfraHandlers(gorillaW)
-	if err != nil {
+	checker := health.NewHealthChecker()
+	schemas := schema.NewRegistry()
+	if err := infra.RegisterInfraHandlers(gorillaW, checker, schemas); err != nil {
 		panic(err)
 	}
-	if err := sr.AddDirectory("./infra/schema/test-schemas"); err != nil {
+	if err := schemas.AddDirectory("./infra/schema/test-schemas"); err != nil {
 		panic(err)
 	}
 

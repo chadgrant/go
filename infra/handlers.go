@@ -1,6 +1,7 @@
 package infra
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/chadgrant/go-http-infra/infra/health"
@@ -8,36 +9,48 @@ import (
 	"github.com/chadgrant/go-http-infra/infra/schema"
 )
 
-func RegisterInfraHandlers(register func(string, func(http.ResponseWriter, *http.Request))) (hc health.HealthChecker, md metadata.Handler, sr schema.Registry, err error) {
-	md = metadata.NewHandler()
-	hc = health.NewHealthChecker()
+func RegisterInfraHandlers(register func(string, http.HandlerFunc), hc health.HealthChecker, sr schema.Registry) error {
+
+	if sr == nil {
+		sr = schema.NewRegistry()
+	}
+	if hc == nil {
+		hc = health.NewHealthChecker()
+	}
+	if err := addSchemas(sr, health.Asset, metadata.Asset, schema.Asset); err != nil {
+		return fmt.Errorf("registering schams %v", err)
+	}
+	sv, err := schema.NewValidator(sr)
+	if err != nil {
+		return fmt.Errorf("creating schema validator %v", err)
+	}
+
 	hh := health.NewHandler(hc)
-	sr, err = addSchemas(health.Asset, metadata.Asset)
 	sh := schema.NewHandler(sr)
 	register("/live", hh.Live)
 	register("/ready", hh.Ready)
-	register("/health", hh.Report)
-	register("/metadata", md.Metadata)
-	register("/schemas", sh.List)
+	register("/health", sv.Produces("http://schemas.sentex.io/health.json", hh.Report))
+	register("/metadata", sv.Produces("http://schema.sentex.io/metadata.json", metadata.NewHandler().Metadata))
+	register("/schemas", sv.Produces("http://schemas.sentex.io/schemalist.json", sh.List))
 	register("/schema", sh.Get)
 	register("/debug/environment", DebugEnvironmentName)
 	register("/debug/headers", DebugHeaders)
 	register("/debug/time", DebugTime)
 	register("/debug/error", DebugError)
 	register("/debug/name", DebugName)
-	return
+
+	return nil
 }
 
-func addSchemas(getters ...func(string) ([]byte, error)) (schema.Registry, error) {
-	sr := schema.NewRegistry()
+func addSchemas(sr schema.Registry, getters ...func(string) ([]byte, error)) error {
 	for _, get := range getters {
 		bs, err := get("schema.json")
 		if err != nil {
-			return sr, err
+			return err
 		}
 		if err := sr.AddBytes(bs); err != nil {
-			return sr, err
+			return err
 		}
 	}
-	return sr, nil
+	return nil
 }

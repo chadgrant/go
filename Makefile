@@ -96,5 +96,6 @@ embed: ## Embed static resources (go-bindata)
 	@if ! type "go-bindata" > /dev/null 2>&1; then \
 		go get -u github.com/go-bindata/go-bindata/...; \
 	fi
+	cd ./infra/schema; go-bindata -pkg schema *.json
 	cd ./infra/health; go-bindata -pkg health *.json
 	cd ./infra/metadata; go-bindata -pkg metadata *.json

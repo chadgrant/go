@@ -2,8 +2,10 @@ package schema
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -16,13 +18,17 @@ func NewHandler(registry Registry) Handler {
 }
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	ids := make([]string, 0)
+	type schema struct {
+		URI string `json:"uri"`
+		URL string `json:"url"`
+	}
+	schemas := make([]schema, 0)
 	for k := range h.registry.Registered() {
-		ids = append(ids, k)
+		schemas = append(schemas, schema{k, fmt.Sprintf("http://%s/schema?key=%s", r.Host, url.PathEscape(k))})
 	}
 
-	if err := json.NewEncoder(w).Encode(ids); err != nil {
-		log.Printf("could not encode schema keys json in handler %v\n", err)
+	if err := json.NewEncoder(w).Encode(schemas); err != nil {
+		log.Printf("could not encode schemas json in handler %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
