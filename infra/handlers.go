@@ -30,7 +30,7 @@ func RegisterInfraHandlers(register func(string, http.HandlerFunc), hc health.He
 	register("/live", hh.Live)
 	register("/ready", hh.Ready)
 	register("/health", sv.Produces("http://schemas.sentex.io/service/health.json", hh.Report))
-	register("/metadata", sv.Produces("http://schema.sentex.io/service/metadata.json", metadata.NewHandler().Metadata))
+	register("/metadata", sv.Produces("http://schemas.sentex.io/service/metadata.json", metadata.NewHandler().Metadata))
 	register("/schemas", sv.Produces("http://schemas.sentex.io/service/schemalist.json", sh.List))
 	register("/schema", sh.Get)
 	register("/debug/environment", DebugEnvironmentName)
