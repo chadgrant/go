@@ -99,3 +99,8 @@ embed: ## Embed static resources (go-bindata)
 	cd ./infra/schema; go-bindata -pkg schema *.json
 	cd ./infra/health; go-bindata -pkg health *.json
 	cd ./infra/metadata; go-bindata -pkg metadata *.json
+
+publish-schema: ## Copies schema to S3
+	aws s3 cp ./infra/health/schema.json s3://schemas.sentex.io/service/health.json
+	aws s3 cp ./infra/metadata/schema.json s3://schemas.sentex.io/service/metadata.json
+	aws s3 cp ./infra/schema/schema.json s3://schemas.sentex.io/service/schemalist.json
