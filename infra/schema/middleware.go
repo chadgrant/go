@@ -57,8 +57,8 @@ func writeErrors(w http.ResponseWriter, valErrors ErrorCollection) {
 		resp.Errors[i] = e.Error()
 	}
 
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusBadRequest)
-	w.Header().Set("Content-Type", "application/json")
 
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		log.Printf("unable to encode response for schema validation errors: %v", err)
