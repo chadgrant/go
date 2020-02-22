@@ -22,8 +22,14 @@ func Health(config ConfigGetter, hc HealthCheckGetter) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			report("Liveness", rep.Liveness)
-			report("Readiness", rep.Readiness)
+			fmt.Println("Health Check Report")
+			fmt.Printf("Total Duration: %dms\n", rep.Duration)
+			if len(rep.Liveness) > 0 {
+				report("Liveness", rep.Liveness)
+			}
+			if len(rep.Readiness) > 0 {
+				report("Readiness", rep.Readiness)
+			}
 			return nil
 		},
 	}
@@ -32,6 +38,7 @@ func Health(config ConfigGetter, hc HealthCheckGetter) *cobra.Command {
 func report(name string, results []health.Result) {
 	fmt.Printf("%s:\n", name)
 	for _, t := range results {
-		fmt.Printf("\t%s: %s\n", t.Name, t.Status)
+		fmt.Printf("  %s: (%dms) %s \n", t.Name, t.Duration, t.Status)
 	}
+	fmt.Println()
 }

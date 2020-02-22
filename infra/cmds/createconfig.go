@@ -1,6 +1,7 @@
 package cmds
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -15,14 +16,13 @@ var (
 func CreateConfig() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "createconfig",
-		Short: "Creates a stub config file",
+		Short: "Creates a stub config file prepopulated with default values",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if _, err := os.Stat(outfile); err == nil {
 				return err
 			}
-
 			viper.SetConfigType(configType)
-
+			fmt.Printf("Creating %s Config: %s\n", configType, outfile)
 			return viper.WriteConfigAs(outfile)
 		},
 	}

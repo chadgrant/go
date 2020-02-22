@@ -1,6 +1,7 @@
 package cmds
 
 import (
+	"github.com/fatih/structs"
 	"github.com/spf13/cobra"
 )
 
@@ -15,8 +16,7 @@ func Config(loader ConfigGetter) *cobra.Command {
 			if err != nil {
 				return err
 			}
-
-			enumerate(0, cfg)
+			enumerate(0, structs.Map(cfg))
 			return nil
 		},
 	}
