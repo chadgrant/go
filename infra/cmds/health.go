@@ -8,11 +8,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func Health(hc health.HealthChecker) *cobra.Command {
+func Health(config ConfigGetter, hc HealthCheckGetter) *cobra.Command {
 	return &cobra.Command{
 		Use:   "health",
 		Short: "runs health checks and displays status",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := config(cfgFile)
+			if err != nil {
+				return err
+			}
+			hc := hc(cfg)
 			rep, err := hc.Report()
 			if err != nil {
 				return err

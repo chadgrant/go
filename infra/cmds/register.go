@@ -9,14 +9,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type ConfigLoader func(string) (interface{}, error)
+type ConfigGetter func(string) (interface{}, error)
+type HealthCheckGetter func(interface{}) health.HealthChecker
 
-func RegisterDefault(rootCmd *cobra.Command, loader ConfigLoader, hc health.HealthChecker) {
-	rootCmd.AddCommand(Config(loader))
+func Register(rootCmd *cobra.Command, configLoader ConfigGetter, healthchecks HealthCheckGetter) {
+	rootCmd.AddCommand(Config(configLoader))
 	rootCmd.AddCommand(CreateConfig())
 	rootCmd.AddCommand(Metadata())
 	rootCmd.AddCommand(Version())
-	rootCmd.AddCommand(Health(hc))
+	rootCmd.AddCommand(Health(configLoader, healthchecks))
 }
 
 func enumerate(depth int, obj interface{}) {
