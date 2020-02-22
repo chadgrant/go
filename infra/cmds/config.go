@@ -6,7 +6,7 @@ import (
 
 var cfgFile string
 
-func Config(loader ConfigLoader) *cobra.Command {
+func Config(loader ConfigGetter) *cobra.Command {
 	return &cobra.Command{
 		Use:   "config",
 		Short: "displays config information",
